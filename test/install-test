@@ -30,6 +30,20 @@ grep -qF 'install -D -m 0755 "$tmp_file" "$dest"' "$INSTALL" ||
 grep -qF 'for file in omaterm omaterm-limits omaterm-templates omaterm-op' "$INSTALL" ||
   fail "installer should ship the omaterm libraries alongside the command"
 
+grep -qF '/archive/refs/heads/' "$INSTALL" ||
+  fail "installer should fetch the source tarball"
+
+grep -qF 'OMATERM_SRC' "$INSTALL" ||
+  fail "installer should stage the source checkout for the image build"
+
+if grep -qF 'raw.githubusercontent.com/omacom-io/omaterm' "$INSTALL"; then
+  fail "installer should not fetch from the retired upstream repo"
+fi
+
+if grep -qF 'omaterm.org' "$INSTALL"; then
+  fail "installer should not use the dead omaterm.org domain"
+fi
+
 if grep -qF '$HOME/.local/bin' "$INSTALL"; then
   fail "installer should not rely on a shell rc PATH change"
 fi
