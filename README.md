@@ -2,6 +2,8 @@
 
 An Omakase Terminal Setup by DHH. Think of it as a headless [Omarchy](https://omarchy.org).
 
+> **Community-maintained fork.** Upstream `omacom/omaterm` was retired and archived in 2026 (see the [upstream retirement notice](https://omarchy.org/server)). This fork keeps it installable by building the Docker image locally instead of pulling the retired upstream one.
+
 ## What it sets up
 
 - **Shell**: Bash with starship prompt, fzf, eza, zoxide, and tmux
@@ -18,12 +20,25 @@ Core system packages and user-facing tools such as Neovim, tmux, Starship, eza, 
 This installs Omaterm via Docker.
 
 ```bash
-curl -fsSL https://omaterm.org/install | bash
+curl -fsSL https://raw.githubusercontent.com/okki-at-zero/omaterm/master/install.sh | bash
 ```
 
 On Arch, Debian/Ubuntu, and Fedora, it also installs and enables Docker. On WSL, Docker Desktop with WSL integration must already be installed and running.
 
 Run `omaterm` to get started.
+
+### Image
+
+Omaterm runs from a locally built image named `omaterm:local`. The first `omaterm` run builds it from the source checkout the installer stages under `~/.local/share/omaterm/src` and reuses it from then on. The build works without credentials; supplying a GitHub token via `gh`, `GITHUB_TOKEN`, or `GH_TOKEN` only avoids GitHub API rate limits.
+
+Environment variables:
+
+```bash
+OMATERM_IMAGE=ghcr.io/omacom/omaterm  # run from a different image (pulled like any Docker image)
+OMATERM_SRC=/path/to/src  # source checkout used for the local build
+OMATERM_REPO=you/omaterm  # repository the installer fetches (default: this fork)
+OMATERM_REF=my-branch     # branch the installer fetches (default: master)
+```
 
 ## Setup
 
