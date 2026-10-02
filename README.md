@@ -1,5 +1,7 @@
 # Omaterm
 
+**English | [日本語](README.ja.md)**
+
 An Omakase Terminal Setup by DHH. Think of it as a headless [Omarchy](https://omarchy.org).
 
 > **Community-maintained fork.** Upstream `omacom/omaterm` was retired and archived in 2026 (see the [upstream retirement notice](https://omarchy.org/server)). This fork keeps it installable by building the Docker image locally instead of pulling the retired upstream one.
