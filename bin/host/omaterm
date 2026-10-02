@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-IMAGE="${OMATERM_IMAGE:-ghcr.io/omacom-io/omaterm}"
+IMAGE="${OMATERM_IMAGE:-omaterm:local}"
 DEFAULT_NAME="omaterm"
 LABEL="omaterm=1"
 # Marks an Omaterm that opted out of resource limits: it runs uncapped and is
@@ -80,6 +80,34 @@ container_running() {
 container_detached() {
   docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$1" 2>/dev/null |
     grep -qxF 'OMATERM_DETACH=1'
+}
+
+# The default image is built locally, not pulled. When it's missing, build it
+# from the source checkout the installer left behind. A custom OMATERM_IMAGE is
+# left alone — docker run pulls those like any other image.
+ensure_image() {
+  local src token secret_args=()
+
+  docker image inspect "$IMAGE" >/dev/null 2>&1 && return 0
+  [[ -n ${OMATERM_IMAGE:-} ]] && return 0
+
+  src="${OMATERM_SRC:-${XDG_DATA_HOME:-$HOME/.local/share}/omaterm/src}"
+  if [[ ! -f $src/Dockerfile ]]; then
+    echo "Error: image not found: $IMAGE" >&2
+    echo "No source checkout at $src to build it from." >&2
+    echo "Re-run the installer, point OMATERM_SRC at a checkout, or set OMATERM_IMAGE." >&2
+    exit 1
+  fi
+
+  echo "==> Image $IMAGE not found. Building from $src (takes a few minutes)..." >&2
+
+  token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+  if [[ -z $token ]] && command -v gh >/dev/null 2>&1; then
+    token="$(gh auth token 2>/dev/null || true)"
+  fi
+  [[ -n $token ]] && secret_args=(--secret "id=GITHUB_TOKEN,env=GITHUB_TOKEN")
+
+  GITHUB_TOKEN="$token" docker build "${secret_args[@]}" -t "$IMAGE" "$src"
 }
 
 # The docker socket is group-owned by `docker`. After the installer adds the
@@ -199,6 +227,7 @@ run_new() {
     }
   else
     image="$IMAGE"
+    ensure_image
   fi
 
   name_args=(--name "$name")

@@ -40,11 +40,13 @@ EOF
 
 COPY --chown=omaterm:omaterm mise.packages /tmp/mise.packages
 
-# Install AI tooling via mise
+# Install AI tooling via mise. The GitHub token is optional: without it mise
+# hits the unauthenticated GitHub API, which is rate-limited but usually enough
+# for one build.
 # Do not bake BuildKit's GPG/keyboxd state into runtime containers.
-RUN --mount=type=secret,id=GITHUB_TOKEN,required=true,uid=1000,gid=1000 \
-    github_token="$(cat /run/secrets/GITHUB_TOKEN)" && \
-    export GITHUB_TOKEN="$github_token" GH_TOKEN="$github_token" && \
+RUN --mount=type=secret,id=GITHUB_TOKEN,uid=1000,gid=1000 \
+    github_token="$(cat /run/secrets/GITHUB_TOKEN 2>/dev/null || true)" && \
+    if [ -n "$github_token" ]; then export GITHUB_TOKEN="$github_token" GH_TOKEN="$github_token"; fi && \
     eval "$(mise activate bash)" && \
     mise use -g -y $(grep -vE '^[[:space:]]*(#|$)' /tmp/mise.packages) && \
     (gpgconf --kill all || true) && \
