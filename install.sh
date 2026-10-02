@@ -2,6 +2,7 @@
 set -euo pipefail
 
 OMATERM_BIN_DIR=/usr/local/bin
+OMATERM_SRC="${OMATERM_SRC:-${XDG_DATA_HOME:-$HOME/.local/share}/omaterm/src}"
 
 banner() {
   clear
@@ -93,15 +94,24 @@ install_gum() {
 }
 
 install_omaterm_command() {
-  local base_url file tmp_file dest
+  local tarball extract_dir file tmp_file dest
+
+  # Fetch the whole source checkout, not just the bin files: the image build
+  # fallback in `omaterm` needs the Dockerfile and package lists at runtime.
+  section "Fetching source..."
+  tarball="https://github.com/${OMATERM_REPO:-okki-at-zero/omaterm}/archive/refs/heads/${OMATERM_REF:-master}.tar.gz"
+  extract_dir="$(mktemp -d)"
+  curl -fsSL "$tarball" | tar -xz -C "$extract_dir"
+  rm -rf "$OMATERM_SRC"
+  mkdir -p "$OMATERM_SRC"
+  cp -a "$extract_dir"/*/ "$OMATERM_SRC"/
+  rm -rf "$extract_dir"
 
   # The host CLI is omaterm plus the libraries it sources; ship them side by
   # side so the dirname-based `source` in omaterm resolves them.
-  base_url="https://raw.githubusercontent.com/omacom-io/omaterm/refs/heads/${OMATERM_REF:-master}/bin/host"
-
   for file in omaterm omaterm-limits omaterm-templates omaterm-op; do
     tmp_file="$(mktemp)"
-    curl -fsSL "$base_url/$file" -o "$tmp_file"
+    cp "$OMATERM_SRC/bin/host/$file" "$tmp_file"
     dest="$OMATERM_BIN_DIR/$file"
 
     if ((EUID == 0)); then
