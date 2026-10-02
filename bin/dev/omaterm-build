@@ -19,13 +19,20 @@ Usage: omaterm-build local|test|run|push
 omaterm-build local builds omaterm:local
 omaterm-build test  builds omaterm:local and runs a disposable container using host Docker and networking
 omaterm-build run   runs omaterm:local without rebuilding
-omaterm-build push  builds and pushes ghcr.io/okki-at-zero/omaterm:latest
+omaterm-build push  builds and pushes OMATERM_IMAGE (default: ghcr.io/<your-github-user>/omaterm:latest)
 EOF
 }
 
 case "$COMMAND" in
   local | test | run) IMAGE="${OMATERM_IMAGE:-omaterm:local}" ;;
-  push) IMAGE="${OMATERM_IMAGE:-ghcr.io/okki-at-zero/omaterm:latest}" ;;
+  push)
+    if ! GITHUB_USER="$(gh api user --jq .login)" || [[ -z $GITHUB_USER ]]; then
+      echo "Could not determine GitHub username from gh. Run: gh auth login" >&2
+      exit 1
+    fi
+
+    IMAGE="${OMATERM_IMAGE:-ghcr.io/${GITHUB_USER}/omaterm:latest}"
+    ;;
   *)
     usage
     exit 1
@@ -44,11 +51,6 @@ if [[ $COMMAND != "run" ]]; then
   export DOCKER_BUILDKIT=1
 
   if [[ $COMMAND == "push" ]]; then
-    if ! GITHUB_USER="$(gh api user --jq .login)" || [[ -z $GITHUB_USER ]]; then
-      echo "Could not determine GitHub username from gh." >&2
-      exit 1
-    fi
-
     DOCKER_CONFIG_DIR="$(mktemp -d)"
     export DOCKER_CONFIG="$DOCKER_CONFIG_DIR"
 
