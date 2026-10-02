@@ -4,7 +4,7 @@
 
 DHH による Omakase ターミナルセットアップ。[Omarchy](https://omarchy.org) のヘッドレス版とでも言うべきものです。
 
-> **コミュニティメンテナンスのフォークです。** 上流の `omacom/omaterm` は2026年に引退・アーカイブされました（[上流の引退通知](https://omarchy.org/server)を参照）。本フォークでは、引退済みの upstream イメージを pull する代わりに Docker イメージをローカルでビルドすることで、インストール可能な状態を維持しています。
+> **コミュニティメンテナンスのフォークです。** 上流の `omacom/omaterm` は2026年に提供終了・アーカイブされました（[後継の Omarchy Server](https://omarchy.org/server)を参照）。本フォークでは、提供終了済みの upstream イメージを pull する代わりに Docker イメージをローカルでビルドすることで、インストール可能な状態を維持しています。
 
 ## セットアップされるもの
 
