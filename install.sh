@@ -137,6 +137,13 @@ echo
 echo "Starting omaterm..."
 if is_wsl; then
   exec omaterm
-else
+elif docker info >/dev/null 2>&1; then
+  # The docker group is already active (or we are root) — no re-exec needed.
+  exec omaterm
+elif command -v sg >/dev/null 2>&1; then
   exec sg docker -c omaterm
+else
+  # Arch ships no sg(1); setuid newgrp re-reads the docker group the installer
+  # just added and runs the command through a shell fed on stdin.
+  exec newgrp docker <<<"exec omaterm"
 fi
