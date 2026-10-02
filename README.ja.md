@@ -36,7 +36,7 @@ Omaterm は `omaterm:local` というローカルビルドのイメージで動�
 環境変数:
 
 ```bash
-OMATERM_IMAGE=ghcr.io/omacom/omaterm  # 別イメージで動かす（通常の Docker イメージとして pull される）
+OMATERM_IMAGE=ghcr.io/okki-at-zero/omaterm  # 別イメージで動かす（通常の Docker イメージとして pull される）
 OMATERM_SRC=/path/to/src  # ローカルビルドに使うソースチェックアウト
 OMATERM_REPO=you/omaterm  # インストーラが取得するリポジトリ（デフォルト: このフォーク）
 OMATERM_REF=my-branch     # インストーラが取得するブランチ（デフォルト: master）

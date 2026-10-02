@@ -36,7 +36,7 @@ Omaterm runs from a locally built image named `omaterm:local`. The first `omater
 Environment variables:
 
 ```bash
-OMATERM_IMAGE=ghcr.io/omacom/omaterm  # run from a different image (pulled like any Docker image)
+OMATERM_IMAGE=ghcr.io/okki-at-zero/omaterm  # run from a different image (pulled like any Docker image)
 OMATERM_SRC=/path/to/src  # source checkout used for the local build
 OMATERM_REPO=you/omaterm  # repository the installer fetches (default: this fork)
 OMATERM_REF=my-branch     # branch the installer fetches (default: master)

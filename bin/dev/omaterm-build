@@ -19,13 +19,13 @@ Usage: omaterm-build local|test|run|push
 omaterm-build local builds omaterm:local
 omaterm-build test  builds omaterm:local and runs a disposable container using host Docker and networking
 omaterm-build run   runs omaterm:local without rebuilding
-omaterm-build push  builds and pushes ghcr.io/omacom-io/omaterm:latest
+omaterm-build push  builds and pushes ghcr.io/okki-at-zero/omaterm:latest
 EOF
 }
 
 case "$COMMAND" in
   local | test | run) IMAGE="${OMATERM_IMAGE:-omaterm:local}" ;;
-  push) IMAGE="${OMATERM_IMAGE:-ghcr.io/omacom-io/omaterm:latest}" ;;
+  push) IMAGE="${OMATERM_IMAGE:-ghcr.io/okki-at-zero/omaterm:latest}" ;;
   *)
     usage
     exit 1
