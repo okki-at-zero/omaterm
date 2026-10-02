@@ -103,8 +103,9 @@ install_omaterm_command() {
   extract_dir="$(mktemp -d)"
   curl -fsSL "$tarball" | tar -xz -C "$extract_dir"
   rm -rf "$OMATERM_SRC"
-  mkdir -p "$OMATERM_SRC"
-  cp -a "$extract_dir"/*/ "$OMATERM_SRC"/
+  mkdir -p "$(dirname "$OMATERM_SRC")"
+  # The tarball holds a single top-level directory; rename it into place.
+  mv "$extract_dir"/* "$OMATERM_SRC"
   rm -rf "$extract_dir"
 
   # The host CLI is omaterm plus the libraries it sources; ship them side by
