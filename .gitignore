@@ -1,0 +1,13 @@
+# Local working notes (not published)
+AGENTS.md
+
+# Editor swap files / OS metadata
+*~
+*.swp
+*.swo
+.DS_Store
+
+# Local secrets
+.env
+.env.*
+*.token
