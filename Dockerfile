@@ -22,8 +22,10 @@ RUN useradd -m -u 1000 -s /bin/bash omaterm && \
 USER omaterm
 WORKDIR /home/omaterm
 ENV SHELL=/bin/bash
-# Install omadots
-RUN curl -fsSL https://raw.githubusercontent.com/omacom-io/omadots/refs/heads/master/install.sh | bash
+# Install the vendored omadots (previously fetched from the archived
+# omacom-io/omadots repository at build time).
+COPY --chown=omaterm:omaterm omadots/ /home/omaterm/.local/share/omadots/
+RUN bash /home/omaterm/.local/share/omadots/install.sh
 
 # Copy configs and the container-side bins (host/ and dev/ stay out of the image)
 COPY --chown=omaterm:omaterm config/ /home/omaterm/.config/
