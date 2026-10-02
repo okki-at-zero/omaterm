@@ -36,12 +36,16 @@ grep -qF '/archive/refs/heads/' "$INSTALL" ||
 grep -qF 'OMATERM_SRC' "$INSTALL" ||
   fail "installer should stage the source checkout for the image build"
 
-if grep -qF 'raw.githubusercontent.com/omacom-io/omaterm' "$INSTALL"; then
+if grep -qF 'omacom-io/omaterm' "$INSTALL"; then
   fail "installer should not fetch from the retired upstream repo"
 fi
 
 if grep -qF 'omaterm.org' "$INSTALL"; then
   fail "installer should not use the dead omaterm.org domain"
+fi
+
+if grep -qE 'raw\.githubusercontent\.com/omacom|github\.com/omacom-io/omadots' "$ROOT/Dockerfile"; then
+  fail "Dockerfile should install the vendored omadots, not fetch the retired upstream"
 fi
 
 if grep -qF '$HOME/.local/bin' "$INSTALL"; then
